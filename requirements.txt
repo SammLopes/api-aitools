@@ -5,3 +5,4 @@ gunicorn==22.0.0
 Werkzeug==3.0.6
 ultralytics 
 opencv-python-headless
+flasgger

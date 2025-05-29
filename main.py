@@ -2,9 +2,19 @@ import os
 
 from flask import Flask, request, jsonify
 from ultralytics import YOLO
-
+from flasgger import Swagger 
 
 app = Flask(__name__)
+# Configuração do Swagger
+app.config['SWAGGER'] = {
+    'title': 'API de Detecção de Objetos com YOLO',
+    'description': 'API para detecção de objetos em imagens usando YOLO',
+    'version': '1.0',
+    'uiversion': 3,
+    'specs_route': '/docs/'  # Rota para acessar a documentação Swagger UI
+}
+swagger = Swagger(app)
+
 
 def loadModel():
   return  YOLO('./model');
@@ -15,6 +25,32 @@ def index():
 
 @app.route("/predict", methods=["POST"])
 def predict():
+  """
+    Endpoint para detecção de objetos em imagens usando YOLO
+    ---
+    tags:
+      - Detecção
+    consumes:
+      - multipart/form-data
+    parameters:
+      - name: image
+        in: formData
+        type: file
+        required: true
+        description: Imagem para detecção de objetos
+    responses:
+      200:
+        description: Resultado da detecção
+        schema:
+          type: object
+          properties:
+            filename:
+              type: string
+            img_bytes:
+              type: string
+      400:
+        description: Erro quando a imagem não é fornecida
+    """
   if "image" not in request.files:
     return jsonify({'error':'Imagem não encontrada'}), 400
 

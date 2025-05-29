@@ -10,6 +10,10 @@
     pkgs.libGL
     pkgs.glib
   ];
+  env = {
+    FIREBASE_STUDIO = "studio"; 
+  };
+ 
   idx = {
     # Search for the extensions you want on https://open-vsx.org/ and use "publisher.id"
     extensions = [ "ms-python.python" "rangav.vscode-thunder-client" ];

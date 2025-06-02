@@ -59,13 +59,14 @@ def predict():
       400:
         description: Erro quando a imagem não é fornecida
     """
-  if "image" not in request.files:
+
+  if "file" not in request.files:
     return jsonify({'error':'Imagem não encontrada'}), 400
 
-  files = request.files.getlist('image')
+  files = request.files.getlist('file')
+
   model = loadModel()
   result_list = []
-
   for img_file in files:
     img = Image.open(img_file.stream).convert("RGB")
     results = model(img)
@@ -77,7 +78,8 @@ def predict():
 
     result_list.append({
       'filename': img_file.filename,
-      'img_bytes': f"/output/{img_file.filename}"
+      'img_bytes': f"/output/{img_file.filename}",
+      'size_bytes': len(img_bytes)
     })
 
   return jsonify(result_list )

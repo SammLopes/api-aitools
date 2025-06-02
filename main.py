@@ -56,6 +56,8 @@ def predict():
               type: string
             img_bytes:
               type: string
+            size_bytes:
+              type: integer
       400:
         description: Erro quando a imagem não é fornecida
     """

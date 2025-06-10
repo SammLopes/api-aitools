@@ -1,3 +1,3 @@
 .venv
 .vscode
-/model/
+/model/best.pt

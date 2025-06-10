@@ -8,8 +8,9 @@ from PIL import Image
 
 
 RESULTS_DIR = 'results'
+MODEL_DIR = 'model'
 os.makedirs(RESULTS_DIR, exist_ok=True)
-
+os.makedirs(MODEL_DIR , exist_ok=True)
 app = Flask(__name__)
 CORS(app)
 # Configuração do Swagger
@@ -18,7 +19,7 @@ app.config['SWAGGER'] = {
     'description': 'API para detecção de objetos em imagens usando YOLO',
     'version': '1.0',
     'uiversion': 3,
-    'specs_route': '/docs/'  # Rota para acessar a documentação Swagger UI
+    'specs_route': '/docs/'  
 }
 swagger = Swagger(app)
 
@@ -41,7 +42,7 @@ def predict():
     consumes:
       - multipart/form-data
     parameters:
-      - name: image
+      - name: file
         in: formData
         type: file
         required: true
@@ -62,7 +63,7 @@ def predict():
         description: Erro quando a imagem não é fornecida
     """
 
-  if "file" not in request.files:
+  if "file"  not in request.files:
     return jsonify({'error':'Imagem não encontrada'}), 400
 
   files = request.files.getlist('file')

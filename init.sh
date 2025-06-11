@@ -6,7 +6,12 @@ APP_MODULE="main:app"
 LOG_FILE="logs.txt"
 VENV_DIR=".venv"
 
+apt update   
+apt install -y  python3 python3.12-venv python3-pip python-is-python3
+
 if [ -d "$VENV_DIR" ]; then
+    rm -rf .venv
+    python3 -m venv .venv
     source $VENV_DIR/bin/activate
 else
     python3 -m venv .venv

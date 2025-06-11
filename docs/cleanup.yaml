@@ -1,0 +1,22 @@
+tags:
+  - Limpeza
+summary: Realiza a limpeza da pasta de resultados
+responses:
+  200:
+    description: Limpeza realizada com sucesso
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+          example: Limpeza concluída
+  500:
+    description: Erro ao executar a limpeza
+    schema:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Erro na limpeza: arquivo em uso"

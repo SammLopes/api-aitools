@@ -1,0 +1,19 @@
+tags:
+  - Resultado
+summary: "Busca a imagem com o reusultado da prediçao"
+parameters:
+  - name: filename
+    in: path
+    type: string
+    required: true
+    description: Nome do arquivo de imagem gerado pela predição
+responses:
+  200:
+    description: Imagem com bounding boxes desenhados
+    content:
+      image/jpeg:
+        schema:
+          type: string
+          format: binary
+  400:
+    description: Imagem não encontrada

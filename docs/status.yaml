@@ -1,0 +1,13 @@
+tags:
+  - Util
+summary: "Retorna a lista de arquivos existentes"
+responses:
+  200:
+    description: Quantidade de arquivos no diretório de resultados
+    schema:
+      type: object
+      properties:
+        total_arquivos:
+          type: integer
+  500:
+    description: Erro ao acessar os arquivos

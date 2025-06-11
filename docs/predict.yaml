@@ -1,0 +1,25 @@
+tags:
+  - Detecção
+summary: "Realiza a detecção de AVC em uma imagme de TC"
+consumes:
+  - multipart/form-data
+parameters:
+  - name: file
+    in: formData
+    type: file
+    required: true
+    description: Imagem para detecção de objetos
+responses:
+  200:
+    description: Resultado da detecção
+    schema:
+      type: object
+      properties:
+        filename:
+          type: string
+        img_bytes:
+          type: string
+        size_bytes:
+          type: integer
+  400:
+    description: Erro quando a imagem não é fornecida

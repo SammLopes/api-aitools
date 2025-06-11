@@ -4,3 +4,4 @@
 ```sh
 ./devserver.sh
 ```
+- Branch optimize de perfomace da api com ML usando .pt com yolo.

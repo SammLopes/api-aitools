@@ -3,6 +3,11 @@ if [ "$FIREBASE_STUDIO"="studio" ]; then
     echo "🔧 Ambiente Firebase Studio detectado"
     
     source ./.venv/bin/activate
+
+    if [ ! -f "logs.txt" ]; then
+        touch logs.txt
+    fi
+
     pip install -r requirements.txt
     python -m flask --app main run --debug
 
@@ -24,6 +29,11 @@ else
         echo "❌ Arquivo requirements.txt não encontrado!"
         exit 1
     fi
+
+    if [ ! -f "logs.txt" ]; then
+        touch logs.txt
+    fi
+
     # Inicia o servidor Flask
     echo "🚀 Iniciando servidor Flask local"
     python -m flask --app main run --debug

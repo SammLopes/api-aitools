@@ -1,8 +1,9 @@
 .venv
 .vscode
 /model/best.pt
-
-.idea/
+/model/steve.pt
 .python-version
-__pycache__/
+.idea
+/results
 convert.py
+__pycache__

@@ -134,7 +134,7 @@ def predict():
     pred_time = time.time() - pred_start
 
     output_path = os.path.join(RESULTS_DIR, f"pred_{img_file.filename}")
-    print(results)
+
     results[0].save(filename=output_path)
 
     with open(output_path, "rb") as f:

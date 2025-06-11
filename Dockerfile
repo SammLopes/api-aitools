@@ -17,6 +17,8 @@ WORKDIR /app
 
 COPY requirements.txt .
 COPY main.py .
+COPY swagger_config.py .
+COPY docs ./docs
 COPY model ./model
 
 RUN pip install --no-cache-dir -r requirements.txt

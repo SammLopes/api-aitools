@@ -1,0 +1,36 @@
+2025-06-14 01:13:20,738 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-06-14 01:13:20,738 - INFO - [33mPress CTRL+C to quit[0m
+2025-06-14 01:13:20,741 - INFO -  * Restarting with stat
+2025-06-14 01:13:24,037 - WARNING -  * Debugger is active!
+2025-06-14 01:13:24,038 - INFO -  * Debugger PIN: 938-246-309
+2025-06-14 01:16:08,708 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-06-14 01:16:08,708 - INFO - [33mPress CTRL+C to quit[0m
+2025-06-14 01:16:08,709 - INFO -  * Restarting with stat
+2025-06-14 01:16:11,464 - WARNING -  * Debugger is active!
+2025-06-14 01:16:11,464 - INFO -  * Debugger PIN: 938-246-309
+2025-06-14 01:19:40,368 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-06-14 01:19:40,369 - INFO - [33mPress CTRL+C to quit[0m
+2025-06-14 01:19:40,369 - INFO -  * Restarting with stat
+2025-06-14 01:19:43,160 - WARNING -  * Debugger is active!
+2025-06-14 01:19:43,160 - INFO -  * Debugger PIN: 938-246-309
+2025-06-14 01:21:53,139 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-06-14 01:21:53,139 - INFO - [33mPress CTRL+C to quit[0m
+2025-06-14 01:21:53,140 - INFO -  * Restarting with stat
+2025-06-14 01:21:55,941 - WARNING -  * Debugger is active!
+2025-06-14 01:21:55,942 - INFO -  * Debugger PIN: 938-246-309
+2025-06-14 01:25:14,817 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-06-14 01:25:14,817 - INFO - [33mPress CTRL+C to quit[0m
+2025-06-14 01:25:14,818 - INFO -  * Restarting with stat
+2025-06-14 01:25:17,590 - WARNING -  * Debugger is active!
+2025-06-14 01:25:17,590 - INFO -  * Debugger PIN: 938-246-309
+2025-06-14 01:32:09,904 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-06-14 01:32:09,904 - INFO - [33mPress CTRL+C to quit[0m
+2025-06-14 01:32:09,905 - INFO -  * Restarting with stat
+2025-06-14 01:32:13,179 - WARNING -  * Debugger is active!
+2025-06-14 01:32:13,180 - INFO -  * Debugger PIN: 938-246-309

@@ -1,7 +1,9 @@
+autopep8
 Flask==3.0.3
-gunicorn==22.0.0
+pip-check-reqs
 onnxruntime
-numpy 
+numpy
+ultralycs
 opencv-python-headless
 flasgger
 flask-cors

@@ -1,20 +1,17 @@
 import gc
 import time
 import os
-import torch
 import logging
-from swagger_config import SWAGGER_CONFIG
+from io import BytesIO
+from PIL import Image
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS, cross_origin
-from ultralytics import YOLO
 from flasgger import Swagger, swag_from 
-from PIL import Image
+from swagger_config import SWAGGER_CONFIG
+from onnx import initialize_onnx, process_image
 
-# Configurações de otimização extrema para máquinas pequenas
-torch.set_num_threads(1)  # Uma thread apenas
 os.environ['OMP_NUM_THREADS'] = '1'
-os.environ['MKL_NUM_THREADS'] = '1'  # Intel MKL
-torch.set_grad_enabled(False)  # Desabilita gradientes globalmente
+os.environ['MKL_NUM_THREADS'] = '1' 
 
 RESULTS_DIR = 'results'
 MODEL_DIR = 'model'
@@ -22,6 +19,8 @@ MODEL_DIR = 'model'
 CONFIDENCE = 0.6  
 MAX_SIZE = 640       
 MAX_DETECTIONS = 50  
+MAX_FILES_PER_REQUEST = 5
+MAX_FILE_SIZE = 5 * 1024 * 1024  
 
 os.makedirs(RESULTS_DIR, exist_ok=True)
 os.makedirs(MODEL_DIR , exist_ok=True)
@@ -41,28 +40,12 @@ logging.basicConfig(
 
 swagger = Swagger(app)
 
-_model = None
-_model_load_time = None
-
-def loadModel():
-  global _model, _model_load_time
-
-  if _model is None:
-    start_time = time.time()
-
-    onnx_path = os.path.join(MODEL_DIR, 'steve.onnx')
-    if os.path.exists(onnx_path):
-      _model = YOLO(onnx_path)
-      model_type = "ONNX"
-    else:
-      raise FileNotFoundError("Modelo não encontrado! Coloque steve.onnx ou steve.pt na pasta model/")
-    
-    _model_load_time = time.time() - start_time
-    logging.info(f"✅ Modelo {model_type} carregado em {_model_load_time:.2f}s");
+onnx_path = os.path.join(MODEL_DIR, 'steve.onnx')
+if not os.path.exists(onnx_path):
+    logging.error("Modelo não encontrado! Coloque steve.onnx na pasta model/")
+    exit(1)
   
-    gc.collect()
-
-  return _model
+session = initialize_onnx(onnx_path)
 
 @app.route("/")
 def index():
@@ -90,10 +73,9 @@ def predict():
 
   files = request.files.getlist('file')
 
-  if len(files) > 3:
-        return jsonify({'error': 'Máximo 3 imagens por requisição (limite para máquinas pequenas)'}), 400
+  if len(files) > MAX_FILES_PER_REQUEST:
+        return jsonify({'error': f'Máximo{MAX_FILES_PER_REQUEST} imagens por requisição (limite para máquinas pequenas)'}), 400
     
-  model = loadModel()
   processing_times = []
   result_list = []
 
@@ -101,82 +83,61 @@ def predict():
       
     img_start = time.time()
     
-    img_file.seek(0, 2)  # Vai para o final
+    img_file.seek(0, 2)  
     file_size = img_file.tell()
-    img_file.seek(0)     # Volta para o início
+    img_file.seek(0)     
 
-    if file_size > 5 * 1024 * 1024:
+    if file_size > MAX_FILE_SIZE:
       return jsonify({
           'error': f'Arquivo {img_file.filename} muito grande ({file_size/1024/1024:.1f}MB). Máximo: 5MB'
       }), 400
 
     img = Image.open(img_file.stream).convert("RGB")
-    original_size = img.size
-    if max(img.size) > MAX_SIZE:
+    img_process_start = time.time()
 
-      ratio = MAX_SIZE / max(img.size)
-      new_size = (int(img.size[0] * ratio), int(img.size[1] * ratio))
-      img = img.resize(new_size, Image.Resampling.LANCZOS)
-      print(f"🔄 Imagem {idx+1} redimensionada: {original_size} → {img.size}")
+    result_img, detections = process_image(img, session)
 
-    pred_start = time.time()
-
-    results = model(
-      img,
-      conf=CONFIDENCE,
-      verbose=False,
-      save=False,
-      show=False,
-      max_det = MAX_DETECTIONS,
-      device="cpu",
-      imgsz=MAX_SIZE
-    )
-    pred_time = time.time() - pred_start
+    process_time = time.time() - img_process_start
 
     output_path = os.path.join(RESULTS_DIR, f"pred_{img_file.filename}")
+    result_img.save(output_path)
 
-    results[0].save(filename=output_path)
+    img_bytes = BytesIO()
+    result_img.save(img_bytes, format='JPEG')
+    img_size = img_bytes.tell()
 
-    with open(output_path, "rb") as f:
-      img_bytes = f.read()
-
-    detections_count = len(results[0].boxes) if results[0].boxes is not None else 0
     img_total_time = time.time() - img_start
     processing_times.append({
-        'prediction_time': pred_time,
+        'processing_time': img_total_time,
         'total_time': img_total_time
     })
 
     result_list.append({
       'filename': img_file.filename,
       'img_bytes': f"/output/{img_file.filename}",
-      'size_bytes': len(img_bytes),
-      'detections_count': detections_count 
+      'size_bytes': img_size,
+      'detections_count': len(detections)
     })
 
-    del img, results
-  
-  gc.collect()    
+    del img, result_img
+    gc.collect()    
 
   total_time = time.time() - start_time
-  avg_pred_time = sum(p['prediction_time'] for p in processing_times) / len(processing_times)
-  
-  for i, p in enumerate(processing_times):
-    logging.info(f"[{files[i].filename}] ⏱️ Tempo de predição: {p['prediction_time']:.3f}s | Tempo total img: {p['total_time']:.3f}s")
+  logging.info(f"📦 Requisição com {len(files)} imagem(s) processada(s) em {total_time:.2f}s")
 
-  logging.info(f"📦 Requisição com {len(files)} imagem(s) processada(s)")
-  logging.info(f"🧮 Média de tempo por imagem: {avg_pred_time:.3f}s | Tempo total da requisição: {total_time:.3f}s\n")
+  for i, times in enumerate(processing_times):
+      filename = files[i].filename
+      detections = result_list[i]['detections_count']
 
-  for i, p in enumerate(processing_times):
-    filename = files[i].filename
-    detections = result_list[i].get('detections_count', '?')  # adicionaremos isso já já
-    logging.info(
-        f"[{filename}] 📸 {detections} detecções | "
-        f"⏱️ Predição: {p['prediction_time']:.3f}s | "
-        f"Total imagem: {p['total_time']:.3f}s"
-    )
-
-  return jsonify( result_list )
+      proc_time = times['processing_time']  
+      total_time_img = times['total_time']
+      
+      logging.info(
+          f"[{filename}] 🔍 {detections} detecções | "
+          f"⏱️ Processamento: {proc_time:.3f}s | "
+          f"Total: {total_time_img:.3f}s"
+      )    
+  return jsonify(result_list)
   
 @app.route('/output/<filename>')
 @cross_origin()
@@ -221,6 +182,7 @@ def status():
   })
 
 if __name__ == "__main__":
+  print("PORT =", os.environ.get("PORT"))
   app.run(
     debug=True, 
     host="0.0.0.0", 

@@ -1,5 +1,5 @@
 #!/bin/sh
-if [ "$FIREBASE_STUDIO"="studio" ]; then 
+if [ "$FIREBASE_STUDIO" = "studio" ]; then 
     echo "🔧 Ambiente Firebase Studio detectado"
     
     . ./.venv/bin/activate
@@ -36,5 +36,5 @@ else
 
     # Inicia o servidor Flask
     echo "🚀 Iniciando servidor Flask local"
-    python -m flask --app main run --debug
+    python -m flask --app main run --debug --port 3000
 fi

@@ -52,7 +52,7 @@ def index():
   """Health check básico"""
   return jsonify({
       "status": "API YOLO ONNX funcionando",
-      "model_loaded": _model is not None,
+      "model_loaded": session is not None,
       "endpoints": [
         "/predict", 
         "/output/<filename>", 

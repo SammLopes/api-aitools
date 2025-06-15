@@ -15,6 +15,7 @@ RUN apt-get update && \
 
 WORKDIR /app
 
+COPY swagger_config.py .
 COPY requirements.txt .
 COPY main.py .
 COPY onnx.py .

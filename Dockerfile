@@ -15,6 +15,7 @@ RUN apt-get update && \
 
 WORKDIR /app
 
+COPY docs/ .
 COPY swagger_config.py .
 COPY requirements.txt .
 COPY main.py .
